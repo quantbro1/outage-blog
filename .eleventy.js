@@ -1,5 +1,6 @@
 module.exports = function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy("posts");
+  eleventyConfig.addPassthroughCopy("styles.css"); // Add this line
   return {
     dir: {
       input: ".",
