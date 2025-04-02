@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title }} | Outage Blog</title>
+  <!-- Google AdSense Script (replace ca-pub-XXXX with your ID) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXX"
+          crossorigin="anonymous"></script>
+</head>
+<body>
+  <header>
+    <h1>Outage Blog</h1>
+    <nav><a href="/">Home</a></nav>
+  </header>
+  <main>
+    {{ content | safe }}
+    <!-- AdSense Ad Unit (customize as needed) -->
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-XXXX"
+         data-ad-slot="YYYY"
+         data-ad-format="auto"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </main>
+</body>
+</html>
