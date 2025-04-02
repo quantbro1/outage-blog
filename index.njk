@@ -1,0 +1,10 @@
+---
+layout: layout.njk
+title: Latest Outages
+---
+<h2>Recent Outage Reports</h2>
+<ul>
+{% for outage in outages %}
+  <li><a href="/posts/{{ outage.date }}-outage/">{{ outage.title }}</a> - {{ outage.date }}</li>
+{% endfor %}
+</ul>
