@@ -2,9 +2,20 @@
 layout: layout.njk
 title: Latest Outages
 ---
-<h2>Recent Outage Reports</h2>
-<ul>
-{% for outage in outages %}
-  <li><a href="/posts/{{ outage.date }}-outage/">{{ outage.title }}</a> - {{ outage.date }}</li>
-{% endfor %}
-</ul>
+<section class="hero">
+  <h2>Recent Outage Reports</h2>
+  <p>Stay updated on service outages reported on X.</p>
+</section>
+<div class="post-grid">
+  {% for outage in outages %}
+    <article class="post-card">
+      <h3><a href="/posts/{{ outage.date }}-outage/">{{ outage.title }}</a></h3>
+      <p class="post-date">{{ outage.date }}</p>
+      <p class="post-excerpt">{{ outage.content | truncate(100) }}</p>
+      <a href="/posts/{{ outage.date }}-outage/" class="read-more">Read More</a>
+    </article>
+  {% endfor %}
+  {% if outages.length === 0 %}
+    <p class="no-posts">No outages reported yet. Check back later!</p>
+  {% endif %}
+</div>
