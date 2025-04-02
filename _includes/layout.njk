@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ title }} | Outage Blog</title>
   <link rel="stylesheet" href="/styles.css">
-  <!-- Google AdSense Script (replace ca-pub-XXXX with your ID) -->
+  <!-- Google AdSense Script with your client ID -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8529571438098551"
           crossorigin="anonymous"></script>
 </head>
@@ -21,11 +21,11 @@
   </header>
   <main class="container">
     {{ content | safe }}
-    <!-- AdSense Ad Unit -->
+    <!-- AdSense Ad Unit (replace data-ad-slot="YYYY" with your slot ID) -->
     <div class="ad-container">
       <ins class="adsbygoogle"
            style="display:block"
-           data-ad-client="ca-pub-XXXX"
+           data-ad-client="ca-pub-8529571438098551"
            data-ad-slot="YYYY"
            data-ad-format="auto"></ins>
       <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
@@ -33,7 +33,7 @@
   </main>
   <footer class="site-footer">
     <div class="container">
-      <p>&copy; {{ "now" | date: "%Y" }} Outage Blog. Powered by X data.</p>
+      <p>© {{ "now" | date: "%Y" }} Outage Blog. Powered by X data.</p>
     </div>
   </footer>
 </body>
