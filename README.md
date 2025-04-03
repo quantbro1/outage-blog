@@ -1,2 +1,2 @@
 # Outage Blog
-A free website that scrapes for outage reports, generates blog posts, and uses Google AdSense.
+A free website that scrapes for outage reports, and generates blog posts.
