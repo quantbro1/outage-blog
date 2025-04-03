@@ -12,10 +12,10 @@ jobs:
           fetch-depth: 0
       - run: npm install
       - run: npm run scrape
-      - run: ls -la posts  # Check generated posts
+      - run: ls -la posts  # Verify .md files
       - run: npm run build
-      - run: ls -la _site  # Check built site
-      - run: cat _site/index.html  # Show index.html content
+      - run: ls -la _site  # Verify _site contents
+      - run: cat _site/index.html  # Show index.html
       - name: Commit and Push Changes
         run: |
           git config user.name "GitHub Action"
@@ -28,4 +28,7 @@ jobs:
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        run: npx netlify-cli deploy --prod --dir=_site --site "$NETLIFY_SITE_ID"
+        run: |
+          echo "Deploying _site contents:"
+          ls -la _site  # Double-check before deploy
+          npx netlify-cli deploy --prod --dir=_site --site "$NETLIFY_SITE_ID" --force
