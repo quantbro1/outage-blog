@@ -8,18 +8,17 @@ async function scrapePowerOutage() {
     console.log('Scraping PowerOutage.us...');
     const response = await axios.get('https://poweroutage.us/', {
       headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' },
-      timeout: 5000
+      timeout: 10000 // Increased timeout
     });
     const $ = cheerio.load(response.data);
     const outages = [];
 
-    // Target the main outage table (adjust based on inspection)
     $('table tr').each((i, el) => {
-      if (i === 0) return; // Skip header row
+      if (i === 0) return; // Skip header
       const state = $(el).find('td:nth-child(1)').text().trim();
       const customersOutRaw = $(el).find('td:nth-child(2)').text().trim();
       const customersOut = parseInt(customersOutRaw.replace(/,/g, '')) || 0;
-      if (customersOut > 0) { // Only include states with outages
+      if (customersOut > 0) {
         const date = new Date().toISOString().split('T')[0];
         const title = `Power Outage in ${state}`;
         const content = `${customersOut} customers affected in ${state} as of ${date}. Source: PowerOutage.us`;
@@ -29,13 +28,14 @@ async function scrapePowerOutage() {
     });
 
     console.log(`Found ${outages.length} outages from PowerOutage.us`);
+    if (outages.length === 0) console.log('No outages found, using fallback');
     return outages.length ? outages.slice(0, 5) : [
       { date: "2025-04-03", title: "Fallback Outage", content: "No outages detected from PowerOutage.us" }
     ];
   } catch (error) {
     console.error('Error scraping PowerOutage.us:', error.message);
     return [
-      { date: "2025-04-03", title: "Fallback Outage", content: "Scraping failed, using test post" }
+      { date: "2025-04-03", title: "Fallback Outage", content: "Scraping failed: " + error.message }
     ];
   }
 }
