@@ -2,7 +2,9 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy("style.css");
 
   eleventyConfig.addCollection("posts", function(collectionApi) {
-    return collectionApi.getFilteredByGlob("posts/*.md");
+    const posts = collectionApi.getFilteredByGlob("posts/*.md");
+    console.log(`Found ${posts.length} posts in collection`);
+    return posts;
   });
 
   return {
