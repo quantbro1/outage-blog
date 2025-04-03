@@ -13,13 +13,20 @@ async function scrapeOutageReport() {
     const $ = cheerio.load(response.data);
     const outages = [];
 
+    // Debug: Log raw report elements
+    const reportElements = $('div.recent-reports div.report').length;
+    console.log(`Found ${reportElements} report elements on page`);
+
     $('div.recent-reports div.report').each((i, el) => {
       const service = $(el).find('.service-name').text().trim();
       const time = $(el).find('.report-time').text().trim();
       const comment = $(el).find('.report-comment').text().trim();
-      if (service && comment.toLowerCase().includes('power')) {
+      console.log(`Report ${i}: Service: ${service}, Time: ${time}, Comment: ${comment}`);
+
+      // Broaden filter: any outage-related terms
+      if (service && (comment.toLowerCase().includes('power') || comment.toLowerCase().includes('outage') || comment.toLowerCase().includes('down'))) {
         const date = new Date().toISOString().split('T')[0];
-        const title = `Power Outage: ${service}`;
+        const title = `Outage: ${service}`;
         const content = `${service} reported down on ${time}. User comment: ${comment}`;
         outages.push({ date, title, content });
         console.log(`Outage detected: ${service}, ${time}`);
