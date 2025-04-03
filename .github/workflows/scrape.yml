@@ -1,5 +1,8 @@
 name: Scrape and Deploy
-on: [push]
+on:
+  push:  # Runs on push to main
+  schedule:
+    - cron: '0 */6 * * *'  # Runs every 6 hours
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -17,10 +20,10 @@ jobs:
           git config user.email "action@github.com"
           git add .
           git commit -m "Add new outage posts" || echo "No changes to commit"
-          git pull origin main --rebase  # Pull after committing local changes
+          git pull origin main --rebase
           git push origin main
       - name: Deploy to Netlify
-        run: npx netlify-cli deploy --prod --dir=_site
+        run: npx netlify-cli deploy --prod --dir=_site --site $NETLIFY_SITE_ID
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
