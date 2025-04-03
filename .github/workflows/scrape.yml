@@ -1,23 +1,16 @@
-name: Scrape X for Outages
-on:
-  schedule:
-    - cron: '0 */6 * * *' # Every 6 hours
-  workflow_dispatch:      # Manual trigger option
+name: Scrape and Deploy
+on: [push]
 jobs:
-  scrape:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
       - run: npm install
-      - run: node scrape.js
-      - name: Commit new posts
-        run: |
-          git config user.name "GitHub Action"
-          git config user.email "action@github.com"
-          git add .
-          git commit -m "Add new outage posts" || echo "No changes"
-          git push
+      - run: npm run scrape
+      - run: npm run build
+      - run: ls -la _site  # Debug: Verify _site contents
+      - name: Deploy to Netlify
+        run: npx netlify-cli deploy --prod --dir=_site
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
