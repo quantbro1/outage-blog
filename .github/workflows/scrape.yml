@@ -24,7 +24,8 @@ jobs:
           git commit -m "Add new outage posts" || echo "No changes to commit"
           git fetch origin main
           git reset --hard origin/main  # Reset to remote state
-          git merge --no-ff -m "Merge new outage posts" || git merge --abort && git reset --hard origin/main && git merge --no-ff -m "Merge new outage posts"
+          git add .
+          git commit -m "Update with latest outage posts" || echo "No new changes"
           git push origin main
       - name: Deploy to Netlify
         env:
