@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>{{ title }}</title>
-  <link rel="stylesheet" href="/style.css"> <!-- Optional CSS -->
+  <title>{{ title or "Outage Blog" }}</title>
+  <link rel="stylesheet" href="/style.css">
 </head>
 <body>
   <header>
@@ -12,5 +12,8 @@
   <main>
     {{ content | safe }}
   </main>
+  <footer>
+    <p>&copy; 2025 Outage Blog | Powered by <a href="https://github.com/quantbro1/outage-blog">GitHub</a> | Data sourced from X via Nitter</p>
+  </footer>
 </body>
 </html>
