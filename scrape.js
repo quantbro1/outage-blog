@@ -13,15 +13,18 @@ async function scrapePowerOutage() {
     const $ = cheerio.load(response.data);
     const outages = [];
 
-    // Scrape outage summary table (adjust selector based on site)
-    $('table.stateOutages tr').each((i, el) => {
+    // Target the main outage table (adjust based on inspection)
+    $('table tr').each((i, el) => {
+      if (i === 0) return; // Skip header row
       const state = $(el).find('td:nth-child(1)').text().trim();
-      const customersOut = $(el).find('td:nth-child(2)').text().trim();
-      if (customersOut && parseInt(customersOut.replace(/,/g, '')) > 0) {
+      const customersOutRaw = $(el).find('td:nth-child(2)').text().trim();
+      const customersOut = parseInt(customersOutRaw.replace(/,/g, '')) || 0;
+      if (customersOut > 0) { // Only include states with outages
         const date = new Date().toISOString().split('T')[0];
         const title = `Power Outage in ${state}`;
-        const content = `${customersOut} customers affected in ${state} as of ${date}.`;
+        const content = `${customersOut} customers affected in ${state} as of ${date}. Source: PowerOutage.us`;
         outages.push({ date, title, content });
+        console.log(`Outage detected: ${state}, ${customersOut} customers`);
       }
     });
 
