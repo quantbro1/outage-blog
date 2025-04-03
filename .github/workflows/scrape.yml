@@ -12,9 +12,10 @@ jobs:
           fetch-depth: 0
       - run: npm install
       - run: npm run scrape
-      - run: ls -la posts  # Debug: Check generated posts
+      - run: ls -la posts  # Check generated posts
       - run: npm run build
-      - run: ls -la _site  # Debug: Check built site
+      - run: ls -la _site  # Check built site
+      - run: cat _site/index.html  # Show index.html content
       - name: Commit and Push Changes
         run: |
           git config user.name "GitHub Action"
