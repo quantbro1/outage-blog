@@ -13,7 +13,6 @@ async function scrapeOutageReport() {
     const $ = cheerio.load(response.data);
     const outages = [];
 
-    // Adjust selector based on Outage.Report’s structure
     $('div.recent-reports div.report').each((i, el) => {
       const service = $(el).find('.service-name').text().trim();
       const time = $(el).find('.report-time').text().trim();
