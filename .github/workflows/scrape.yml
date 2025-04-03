@@ -15,6 +15,7 @@ jobs:
       - run: ls -la posts  # Verify .md files
       - run: npm run build
       - run: ls -la _site  # Verify _site contents
+      - run: ls -la _site/posts  # Verify post pages
       - run: cat _site/index.html  # Show index.html
       - name: Commit and Push Changes
         run: |
@@ -30,5 +31,5 @@ jobs:
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
         run: |
           echo "Deploying _site contents:"
-          ls -la _site  # Confirm before deploy
+          ls -la _site
           npx netlify-cli deploy --prod --dir=_site --site "$NETLIFY_SITE_ID"
