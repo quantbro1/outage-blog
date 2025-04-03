@@ -3,35 +3,34 @@ const cheerio = require('cheerio');
 const fs = require('fs').promises;
 const path = require('path');
 
-async function scrapeOutageReport() {
+async function scrapePowerOutage() {
   try {
-    console.log('Scraping Outage.Report...');
-    const response = await axios.get('https://outage.report/', {
+    console.log('Scraping PowerOutage.us...');
+    const response = await axios.get('https://poweroutage.us/', {
       headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' },
       timeout: 5000
     });
     const $ = cheerio.load(response.data);
     const outages = [];
 
-    // Scrape recent reports (adjust selector based on site structure)
-    $('div.report-item').each((i, el) => {
-      const service = $(el).find('.service-name').text().trim();
-      const time = $(el).find('.report-time').text().trim();
-      const comment = $(el).find('.report-comment').text().trim();
-      if (service && (comment.toLowerCase().includes('down') || comment.toLowerCase().includes('outage'))) {
+    // Scrape outage summary table (adjust selector based on site)
+    $('table.stateOutages tr').each((i, el) => {
+      const state = $(el).find('td:nth-child(1)').text().trim();
+      const customersOut = $(el).find('td:nth-child(2)').text().trim();
+      if (customersOut && parseInt(customersOut.replace(/,/g, '')) > 0) {
         const date = new Date().toISOString().split('T')[0];
-        const title = `Outage Reported: ${service}`;
-        const content = `${service} reported down on ${time}. User comment: ${comment}`;
+        const title = `Power Outage in ${state}`;
+        const content = `${customersOut} customers affected in ${state} as of ${date}.`;
         outages.push({ date, title, content });
       }
     });
 
-    console.log(`Found ${outages.length} outages from Outage.Report`);
+    console.log(`Found ${outages.length} outages from PowerOutage.us`);
     return outages.length ? outages.slice(0, 5) : [
-      { date: "2025-04-03", title: "Fallback Outage", content: "No outages detected from Outage.Report" }
+      { date: "2025-04-03", title: "Fallback Outage", content: "No outages detected from PowerOutage.us" }
     ];
   } catch (error) {
-    console.error('Error scraping Outage.Report:', error.message);
+    console.error('Error scraping PowerOutage.us:', error.message);
     return [
       { date: "2025-04-03", title: "Fallback Outage", content: "Scraping failed, using test post" }
     ];
@@ -39,7 +38,7 @@ async function scrapeOutageReport() {
 }
 
 async function generatePosts() {
-  const outages = await scrapeOutageReport();
+  const outages = await scrapePowerOutage();
   if (!outages.length) {
     console.log('No outages to process');
     return;
