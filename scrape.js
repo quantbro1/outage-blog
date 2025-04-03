@@ -3,47 +3,43 @@ const cheerio = require('cheerio');
 const fs = require('fs').promises;
 const path = require('path');
 
-// Active Nitter instances from your table
-const nitterInstances = [
-  'https://xcancel.com',
-  'https://nitter.privacydev.net',
-  'https://nitter.poast.org',
-  'https://lightbrd.com',
-  'https://nitter.space'
-];
+async function scrapeOutageReport() {
+  try {
+    console.log('Scraping Outage.Report...');
+    const response = await axios.get('https://outage.report/', {
+      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' },
+      timeout: 5000
+    });
+    const $ = cheerio.load(response.data);
+    const outages = [];
 
-async function scrapeXForOutages() {
-  for (const instance of nitterInstances) {
-    try {
-      console.log(`Trying Nitter instance: ${instance}`);
-      const response = await axios.get(`${instance}/search?q=%23outage`, {
-        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' },
-        timeout: 5000
-      });
-      const $ = cheerio.load(response.data);
-      const outages = [];
-      $('.tweet-content').each((i, el) => {
-        const text = $(el).text().toLowerCase();
-        if (text.includes('down') || text.includes('outage')) {
-          const date = new Date().toISOString().split('T')[0];
-          const title = `Outage Reported: ${text.slice(0, 50)}...`;
-          outages.push({ date, title, content: text });
-        }
-      });
-      console.log(`Found ${outages.length} outages from ${instance}`);
-      return outages.length ? outages.slice(0, 5) : [];
-    } catch (error) {
-      console.error(`Error with ${instance}: ${error.message}`);
-    }
+    // Scrape recent reports (adjust selector based on site structure)
+    $('div.report-item').each((i, el) => {
+      const service = $(el).find('.service-name').text().trim();
+      const time = $(el).find('.report-time').text().trim();
+      const comment = $(el).find('.report-comment').text().trim();
+      if (service && (comment.toLowerCase().includes('down') || comment.toLowerCase().includes('outage'))) {
+        const date = new Date().toISOString().split('T')[0];
+        const title = `Outage Reported: ${service}`;
+        const content = `${service} reported down on ${time}. User comment: ${comment}`;
+        outages.push({ date, title, content });
+      }
+    });
+
+    console.log(`Found ${outages.length} outages from Outage.Report`);
+    return outages.length ? outages.slice(0, 5) : [
+      { date: "2025-04-03", title: "Fallback Outage", content: "No outages detected from Outage.Report" }
+    ];
+  } catch (error) {
+    console.error('Error scraping Outage.Report:', error.message);
+    return [
+      { date: "2025-04-03", title: "Fallback Outage", content: "Scraping failed, using test post" }
+    ];
   }
-  console.log('All Nitter instances failed, using fallback');
-  return [
-    { date: "2025-04-03", title: "Fallback Outage", content: "No outages detected from X" }
-  ];
 }
 
 async function generatePosts() {
-  const outages = await scrapeXForOutages();
+  const outages = await scrapeOutageReport();
   if (!outages.length) {
     console.log('No outages to process');
     return;
