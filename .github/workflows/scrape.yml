@@ -22,7 +22,9 @@ jobs:
           git config user.email "action@github.com"
           git add .
           git commit -m "Add new outage posts" || echo "No changes to commit"
-          git pull origin main --rebase
+          git fetch origin main
+          git reset --hard origin/main  # Reset to remote state
+          git merge --no-ff -m "Merge new outage posts" || git merge --abort && git reset --hard origin/main && git merge --no-ff -m "Merge new outage posts"
           git push origin main
       - name: Deploy to Netlify
         env:
