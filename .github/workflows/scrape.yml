@@ -12,6 +12,7 @@ jobs:
       - run: npm install
       - run: npm run scrape
       - run: ls -la posts
+      - run: rm -rf _site  # Clear old build
       - run: npm run build
       - run: ls -la _site
       - run: ls -la _site/posts
