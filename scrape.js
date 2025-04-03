@@ -18,13 +18,14 @@ async function scrapeXForOutages() {
         outages.push({ date, title, content: text });
       }
     });
+    console.log(`Found ${outages.length} outages`);
     return outages.length ? outages.slice(0, 5) : [
-      { date: "2025-04-03", title: "Test Outage", content: "Fallback: No outages detected" }
+      { date: "2025-04-03", title: "Fallback Outage", content: "No outages detected, this is a test post" }
     ];
   } catch (error) {
-    console.error('Error scraping X:', error);
+    console.error('Error scraping X:', error.message);
     return [
-      { date: "2025-04-03", title: "Test Outage", content: "Scraping failed, using fallback data" }
+      { date: "2025-04-03", title: "Fallback Outage", content: "Scraping failed, using test post" }
     ];
   }
 }
@@ -43,7 +44,7 @@ async function generatePosts() {
   await fs.mkdir(postsDir, { recursive: true });
 
   for (const outage of outages) {
-    const fileName = `${outage.date}-outage.md`;
+    const fileName = `${outage.date}-outage-${Date.now()}.md`; // Unique filename
     const postContent = `---
 layout: layout.njk
 title: "${outage.title}"
