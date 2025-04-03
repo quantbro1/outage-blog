@@ -6,7 +6,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Fetch all history to avoid shallow clone issues
+          fetch-depth: 0  # Fetch all history
       - run: npm install
       - run: npm run scrape
       - run: npm run build
@@ -15,9 +15,9 @@ jobs:
         run: |
           git config user.name "GitHub Action"
           git config user.email "action@github.com"
-          git pull origin main --rebase  # Pull and rebase to integrate remote changes
           git add .
           git commit -m "Add new outage posts" || echo "No changes to commit"
+          git pull origin main --rebase  # Pull after committing local changes
           git push origin main
       - name: Deploy to Netlify
         run: npx netlify-cli deploy --prod --dir=_site
