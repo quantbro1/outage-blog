@@ -3,15 +3,12 @@ const cheerio = require('cheerio');
 const fs = require('fs').promises;
 const path = require('path');
 
-// Simple X scraping function with fallback
 async function scrapeXForOutages() {
   try {
-    // Use a reliable Nitter instance to scrape public X data
     const response = await axios.get('https://nitter.lacontrevoie.fr/search?q=%23outage', {
       headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' }
     });
     const $ = cheerio.load(response.data);
-    
     const outages = [];
     $('.tweet-content').each((i, el) => {
       const text = $(el).text().toLowerCase();
@@ -21,7 +18,6 @@ async function scrapeXForOutages() {
         outages.push({ date, title, content: text });
       }
     });
-    // Return up to 5 outages, or fallback if none found
     return outages.length ? outages.slice(0, 5) : [
       { date: "2025-04-03", title: "Test Outage", content: "Fallback: No outages detected" }
     ];
@@ -33,7 +29,6 @@ async function scrapeXForOutages() {
   }
 }
 
-// Generate Markdown files and update data
 async function generatePosts() {
   const outages = await scrapeXForOutages();
   if (!outages.length) {
@@ -41,11 +36,9 @@ async function generatePosts() {
     return;
   }
 
-  // Update _data/outages.js for Eleventy
   const dataContent = `module.exports = ${JSON.stringify(outages, null, 2)};`;
   await fs.writeFile('_data/outages.js', dataContent);
 
-  // Generate blog posts in posts directory
   const postsDir = path.join(__dirname, 'posts');
   await fs.mkdir(postsDir, { recursive: true });
 
