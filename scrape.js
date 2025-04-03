@@ -3,12 +3,13 @@ const cheerio = require('cheerio');
 const fs = require('fs').promises;
 const path = require('path');
 
-// List of Nitter instances to try
+// Active Nitter instances from your table
 const nitterInstances = [
-  'https://nitter.lacontrevoie.fr',
-  'https://nitter.net',
-  'https://nitter.cz',
-  'https://nitter.1d4.us'
+  'https://xcancel.com',
+  'https://nitter.privacydev.net',
+  'https://nitter.poast.org',
+  'https://lightbrd.com',
+  'https://nitter.space'
 ];
 
 async function scrapeXForOutages() {
@@ -17,7 +18,7 @@ async function scrapeXForOutages() {
       console.log(`Trying Nitter instance: ${instance}`);
       const response = await axios.get(`${instance}/search?q=%23outage`, {
         headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' },
-        timeout: 5000 // 5-second timeout
+        timeout: 5000
       });
       const $ = cheerio.load(response.data);
       const outages = [];
@@ -35,7 +36,6 @@ async function scrapeXForOutages() {
       console.error(`Error with ${instance}: ${error.message}`);
     }
   }
-  // If all instances fail, return a single fallback
   console.log('All Nitter instances failed, using fallback');
   return [
     { date: "2025-04-03", title: "Fallback Outage", content: "No outages detected from X" }
@@ -49,16 +49,13 @@ async function generatePosts() {
     return;
   }
 
-  // Clear old posts to avoid duplicates
   const postsDir = path.join(__dirname, 'posts');
   await fs.rm(postsDir, { recursive: true, force: true });
   await fs.mkdir(postsDir, { recursive: true });
 
-  // Update _data/outages.js
   const dataContent = `module.exports = ${JSON.stringify(outages, null, 2)};`;
   await fs.writeFile('_data/outages.js', dataContent);
 
-  // Generate new posts
   for (const outage of outages) {
     const fileName = `${outage.date}-outage-${Date.now()}.md`;
     const postContent = `---
