@@ -1,5 +1,5 @@
 module.exports = function(eleventyConfig) {
-  eleventyConfig.addPassthroughCopy("style.css"); // Copy CSS if you use it
+  eleventyConfig.addPassthroughCopy("style.css");
 
   eleventyConfig.addCollection("posts", function(collectionApi) {
     return collectionApi.getFilteredByGlob("posts/*.md");
@@ -7,10 +7,10 @@ module.exports = function(eleventyConfig) {
 
   return {
     dir: {
-      input: ".",          // Root directory
-      output: "_site",     // Matches Netlify publish directory
-      includes: "_includes" // Templates directory
+      input: ".",
+      output: "_site",
+      includes: "_includes"
     },
-    markdownTemplateEngine: "njk" // Use Nunjucks for Markdown
+    markdownTemplateEngine: "njk"
   };
 };
