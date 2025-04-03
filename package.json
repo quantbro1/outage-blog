@@ -1,13 +1,16 @@
 {
   "name": "outage-blog",
   "version": "1.0.0",
+  "description": "A blog scraping X for outage reports",
   "scripts": {
-    "build": "eleventy",
-    "serve": "eleventy --serve"
+    "scrape": "node scrape.js",
+    "build": "eleventy"
   },
   "dependencies": {
-    "@11ty/eleventy": "^2.0.1",
     "axios": "^1.6.8",
     "cheerio": "^1.0.0-rc.12"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^2.0.1"
   }
 }
