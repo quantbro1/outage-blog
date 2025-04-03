@@ -1,6 +1,6 @@
 name: Scrape and Deploy
 on:
-  workflow_dispatch: # Manual trigger only
+  workflow_dispatch:
 
 jobs:
   build:
@@ -23,7 +23,7 @@ jobs:
           git add .
           git commit -m "Add new outage posts" || echo "No changes to commit"
           git fetch origin main
-          git reset --hard origin/main  # Reset to remote state
+          git reset --hard origin/main
           git add .
           git commit -m "Update with latest outage posts" || echo "No new changes"
           git push origin main
@@ -34,4 +34,4 @@ jobs:
         run: |
           echo "Deploying _site contents:"
           ls -la _site
-          npx netlify-cli deploy --prod --dir=_site --site "$NETLIFY_SITE_ID"
+          npx netlify-cli deploy --prod --dir=_site --site "$NETLIFY_SITE_ID" --message "Deploy with latest outages"
